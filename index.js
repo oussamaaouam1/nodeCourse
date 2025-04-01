@@ -1,44 +1,44 @@
-const _ = require("lodash");
+const express = require("express");
+const app = express();
+const port = 3000;
+const mongoose = require("mongoose");
+app.use(express.urlencoded({ extended: true }));
 
-const items = [1, [2, [3, [4]]]];
+const Mydata = require("./models/mydataSchema");
 
-const newItems = _.flatMapDeep(items);
-console.log(newItems);
-console.log("test");
+app.get("/", (req, res) => {
+  res.sendFile("./views/home.html", { root: __dirname });
+});
+app.get("/send", (req, res) => {
+  res.sendFile("./views/index.html", { root: __dirname });
+})
 
-const { readFile } = require("fs");
-console.log("start the first task");
-readFile("./content/text.txt", "utf8", (err, res) => {
-  if (err) {
+app.post("/", (req, res) => {
+  console.log(req.body);
+  const myData = new Mydata(req.body);
+  myData
+    .save()
+    .then(() => {
+      console.log("Data saved to database");
+    })
+    .catch((err) => {
+      console.log(err);
+    }); 
+
+  res.redirect("/send");
+});
+
+mongoose
+  .connect(
+    "mongodb+srv://oussamaaouam:oussamasvt1@cluster0.vjkr9ag.mongodb.net/all-data?retryWrites=true&w=majority&appName=Cluster0"
+  )
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`listening to port ${port}`);
+
+      console.log("connected to DB");
+    });
+  })
+  .catch((err) => {
     console.log(err);
-    return;
-  }
-
-  console.log(res);
-  console.log("first task completed");
-});
-console.log("start next task");
-
-console.log("first");
-setTimeout(() => {
-  console.log("third");
-}, 1);
-console.log("second");
-
-// console.log("start the task");
-// setInterval(() => {
-//   console.log("in task");
-
-// }, 2000);
-// console.log("finish the task");
-
-const http = require("http");
-
-const server = http.createServer((req, res) => {
-  console.log("hello node");
-  res.end("hello node");
-});
-
-server.listen(5000, () => {
-  console.log("server listening on 5000");
-});
+  });
