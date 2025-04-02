@@ -3,15 +3,24 @@ const app = express();
 const port = 3000;
 const mongoose = require("mongoose");
 app.use(express.urlencoded({ extended: true }));
+app.set("view engine", "ejs");
+app.use(express.static("public"));
 
 const Mydata = require("./models/mydataSchema");
 
 app.get("/", (req, res) => {
-  res.sendFile("./views/home.html", { root: __dirname });
+  Mydata.find()
+    .then((data) => {
+      res.render("home", { title: "Home", arr: data });
+      console.log(data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 app.get("/send", (req, res) => {
   res.sendFile("./views/index.html", { root: __dirname });
-})
+});
 
 app.post("/", (req, res) => {
   console.log(req.body);
@@ -23,7 +32,7 @@ app.post("/", (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-    }); 
+    });
 
   res.redirect("/send");
 });

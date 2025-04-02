@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title><%= title %></title>
 </head>
 <body>
   <h1>Enter your name</h1>
@@ -10,6 +10,7 @@
     <input type="text" name="userNameee" placeholder="Enter your name" required>
     <br>
     <button>Send to DB</button>
+    <h2>your name is <%= arr.at(-1).userNameee %></h2>
   </form>
 
 </body>
